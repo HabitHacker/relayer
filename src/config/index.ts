@@ -14,4 +14,15 @@ export default {
     cors: required("CORS_ORIGIN", "http://localhost:3000"),
     port: parseInt(required("HOST_PORT", "6000")),
   },
+  rpc: {
+    mumbai: required("MUMBAI_RPC"),
+    alfajores: required("ALFAJORES_RPC"),
+  },
+  contract: {
+    mumbai: required("MUMBAI_CONTRACT"),
+    alfajores: required("ALFAJORES_CONTRACT"),
+  },
+  relayer: {
+    privateKey: required("RELAYER_PRIVATE_KEY"),
+  },
 };
