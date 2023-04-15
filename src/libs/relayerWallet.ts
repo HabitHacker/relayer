@@ -20,6 +20,7 @@ export default class RelayerWallet {
   }
 
   getRelayer(): WalletGroup {
+    if (this.relayer) return this.relayer;
     const mumbaiProvider = new ethers.InfuraProvider(
       "mumbai",
       config.rpc.mumbai
@@ -40,6 +41,7 @@ export default class RelayerWallet {
   }
 
   getContract(): ContractGroup {
+    if (this.habitContract) return this.habitContract;
     const mumbaiContract = new ethers.Contract(
       config.contract.mumbai,
       contractAbi,

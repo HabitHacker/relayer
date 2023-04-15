@@ -5,6 +5,7 @@ import cors from "cors";
 import morgan from "morgan";
 import RelayerWallet from "./libs/relayerWallet";
 import { NetworkList, VerifyUnit } from "./types/type";
+import { ethers } from "ethers";
 
 const app = express();
 
@@ -62,6 +63,34 @@ app.post("/habit/settle", async (req, res) => {
     return res.status(500).json({ message: "fail" });
   }
   return res.status(200).json({ message: "success" });
+});
+
+app.post("/signature/moderator", async (req, res) => {
+  const { address, network }: { address: string; network: NetworkList } =
+    req.body;
+  const _relayerWallet = new RelayerWallet();
+  const _walletGroup = _relayerWallet.getRelayer();
+  const _wallet = _walletGroup[network];
+  const resisterHash = ethers.solidityPackedKeccak256(
+    ["uint256"],
+    [BigInt(address)]
+  );
+  const _signature = await _wallet.signMessage(ethers.toBeArray(resisterHash));
+  return res.status(200).json({ signature: _signature });
+});
+
+//A router that synchronizes all chains when a modulator is registered in one chain
+app.post("/moderator/register", async (req, res) => {
+  const {
+    address,
+    assignedNetwork,
+  }: { address: string; assignedNetwork: NetworkList } = req.body;
+  const _contractList = new RelayerWallet().getContract();
+  for (let _network in NetworkList) {
+    if (_network === assignedNetwork) continue;
+    const _contract = _contractList[_network as NetworkList];
+    await _contract.resisterOtherChainModerator(address);
+  }
 });
 
 app.listen(config.host, () => {
