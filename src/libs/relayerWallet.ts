@@ -84,13 +84,13 @@ export default class RelayerWallet {
     _network: NetworkList
   ) {
     const _contract = this.habitContract[_network];
-    const tx = _contract.verifyBundle(_moderatorAddress, _verifyBundle);
-    return tx;
+    const tx = await _contract.verifyBundle(_moderatorAddress, _verifyBundle);
+    await tx.wait();
   }
 
   async settle(_habitId: string, _network: NetworkList) {
     const _contract = this.habitContract[_network];
-    const tx = _contract.settleWinner(_habitId);
-    return tx;
+    const tx = await _contract.settleWinner(_habitId);
+    await tx.wait();
   }
 }
